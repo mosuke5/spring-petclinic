@@ -9,7 +9,19 @@ spec:
       targetPort: 8080
   selector:
     app: petclinic
-
+---
+apiVersion: route.openshift.io/v1
+kind: Route
+metadata:
+  name: petclinic
+spec:
+  port:
+    targetPort: 8080
+  to:
+    kind: Service
+    name: petclinic
+    weight: 100
+  wildcardPolicy: None
 ---
 apiVersion: apps/v1
 kind: Deployment
