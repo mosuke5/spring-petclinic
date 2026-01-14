@@ -4,7 +4,6 @@ kind: Service
 metadata:
   name: petclinic
 spec:
-  type: NodePort
   ports:
     - port: 80
       targetPort: 8080
@@ -44,6 +43,12 @@ spec:
           ports:
             - name: http
               containerPort: 8080
+          startupProbe:
+            httpGet:
+              path: /livez
+              port: http
+            failureThreshold: 30
+            periodSeconds: 10
           livenessProbe:
             httpGet:
               path: /livez
