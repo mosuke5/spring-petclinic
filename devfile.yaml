@@ -24,6 +24,10 @@ components:
           value: "-XX:MaxRAMPercentage=50.0 -XX:+UseParallelGC"
         - name: MAVEN_OPTS
           value: "-Xmx1g"
+        - name: CLAUDE_CODE_USE_BEDROCK
+          value: "1"
+        - name: AWS_REGION
+          value: "ap-southeast-1"
       endpoints:
         - name: springboot
           targetPort: 8080
@@ -74,3 +78,11 @@ commands:
       group:
         kind: test
         isDefault: true
+  - id: install-claude-code
+    exec:
+      label: "Install Claude Code"
+      component: tools
+      commandLine: curl -fsSL https://claude.ai/install.sh | bash
+events:
+  postStart:
+    - install-claude-code
