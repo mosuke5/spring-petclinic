@@ -1,0 +1,76 @@
+schemaVersion: 2.2.2
+metadata:
+  name: java-springboot-dev
+  displayName: Java Spring Boot Development
+  description: Java Spring Boot 開発用の標準開発環境
+  language: Java
+  tags:
+    - Java
+    - Spring Boot
+components:
+  - name: tools
+    container:
+      image: registry.redhat.io/devspaces/udi-base-rhel10:3.27
+      memoryLimit: 6Gi
+      memoryRequest: 2Gi
+      cpuLimit: "2000m"
+      cpuRequest: "500m"
+      mountSources: true
+      volumeMounts:
+        - name: m2
+          path: /home/user/.m2
+      env:
+        - name: JAVA_OPTS
+          value: "-XX:MaxRAMPercentage=50.0 -XX:+UseParallelGC"
+        - name: MAVEN_OPTS
+          value: "-Xmx1g"
+      endpoints:
+        - name: springboot
+          targetPort: 8080
+          exposure: public
+          protocol: https
+        - name: debug
+          targetPort: 5005
+          exposure: internal
+  - name: m2
+    volume:
+      size: 2Gi
+commands:
+  - id: build
+    exec:
+      label: "Maven Build"
+      component: tools
+      workingDir: ${PROJECT_SOURCE}
+      commandLine: mvn clean package -DskipTests
+      group:
+        kind: build
+        isDefault: true
+  - id: run
+    exec:
+      label: "Run Spring Boot"
+      component: tools
+      workingDir: ${PROJECT_SOURCE}
+      commandLine: mvn spring-boot:run
+      group:
+        kind: run
+        isDefault: true
+  - id: debug
+    exec:
+      label: "Debug Spring Boot"
+      component: tools
+      workingDir: ${PROJECT_SOURCE}
+      commandLine: >-
+        mvn spring-boot:run
+        -Dspring-boot.run.jvmArguments="-agentlib:jdwp=transport=dt_socket,server=y,suspend=n,address=*:5005"
+      group:
+        kind: debug
+        isDefault: true
+  - id: test
+    exec:
+      label: "Run Tests"
+      component: tools
+      workingDir: ${PROJECT_SOURCE}
+      commandLine: mvn test
+      group:
+        kind: test
+        isDefault: true
