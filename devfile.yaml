@@ -10,7 +10,7 @@ metadata:
 components:
   - name: tools
     container:
-      image: registry.redhat.io/devspaces/udi-base-rhel10:3.27
+      image: registry.redhat.io/devspaces/udi-rhel9:3.27
       memoryLimit: 6Gi
       memoryRequest: 2Gi
       cpuLimit: "2000m"
